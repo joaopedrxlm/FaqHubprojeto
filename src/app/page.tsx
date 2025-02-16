@@ -1,101 +1,121 @@
+"use client";
+import { useState } from "react";
 import Image from "next/image";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Eye, EyeOff, Moon, Sun } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useTheme } from "next-themes";
+const schema = z.object({
+  email: z.string().email("E-mail inválido"),
+  password: z.string().min(6, "A senha deve ter no mínimo 6 caracteres"),
+});
 
-export default function Home() {
+export default function LoginPage() {
+  const [showPassword, setShowPassword] = useState(false);
+  const [role, setRole] = useState("aluno");
+  const { theme, setTheme } = useTheme();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({ resolver: zodResolver(schema) });
+
+  const onSubmit = (data: any) => {
+    console.log("Dados submetidos:", data);
+  };
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="flex items-center justify-center h-screen bg-gradient-to-r from-white via-blue-200 to-blue-400 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700 p-6">
+      <div className="w-full max-w-3xl bg-white dark:bg-gray-900 p-10 rounded-2xl shadow-2xl">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-4xl font-bold text-center text-blue-600 dark:text-blue-400">
+            SEJA BEM-VINDO
+          </h1>
+          <button onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
+            {theme === "dark" ? <Sun size={24} /> : <Moon size={24} />}
+          </button>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <div>
+            <label className="block text-lg font-medium text-gray-800 dark:text-gray-200">
+              E-mail institucional
+            </label>
+            <Input
+              type="email"
+              placeholder="Digite seu e-mail"
+              className="mt-2 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg w-full focus:ring-blue-600 focus:border-blue-600"
+              {...register("email")}
+            />
+            {errors.email && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.email.message}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-lg font-medium text-gray-800 dark:text-gray-200">
+              Senha
+            </label>
+            <div className="relative mt-2">
+              <Input
+                type={showPassword ? "text" : "password"}
+                className="pr-10 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg w-full focus:ring-blue-600 focus:border-blue-600"
+                placeholder="Digite sua senha"
+                {...register("password")}
+              />
+              <button
+                type="button"
+                className="absolute inset-y-0 right-2 flex items-center text-gray-500 dark:text-gray-400 hover:text-blue-600"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
+            {errors.password && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.password.message}
+              </p>
+            )}
+          </div>
+
+          <div className="flex items-center space-x-6">
+            <label className="flex items-center space-x-2 text-gray-800 dark:text-gray-200 font-semibold">
+              <input
+                type="radio"
+                name="role"
+                value="aluno"
+                checked={role === "aluno"}
+                onChange={() => setRole("aluno")}
+                className="text-blue-600 focus:ring-blue-500"
+              />
+              <span>Aluno</span>
+            </label>
+            <label className="flex items-center space-x-2 text-gray-800 dark:text-gray-200 font-semibold">
+              <input
+                type="radio"
+                name="role"
+                value="professor"
+                checked={role === "professor"}
+                onChange={() => setRole("professor")}
+                className="text-blue-600 focus:ring-blue-500"
+              />
+              <span>Professor/Servidor</span>
+            </label>
+          </div>
+
+          <Button
+            type="submit"
+            className="w-full bg-blue-600 dark:bg-blue-500 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600"
+          >
+            Entrar
+          </Button>
+        </form>
+      </div>
     </div>
   );
 }
