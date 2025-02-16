@@ -30,9 +30,9 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gradient-to-r from-white via-blue-200 to-blue-400 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700 p-6">
-      <div className="w-full max-w-4xl bg-white dark:bg-gray-900 p-10 rounded-2xl shadow-2xl flex items-center space-x-10">
-        <div className="w-1/2 hidden md:block">
+    <div className="flex items-center justify-center min-h-screen p-6 bg-gradient-to-r from-white via-blue-200 to-blue-400 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700">
+      <div className="w-full max-w-5xl bg-white dark:bg-gray-900 p-6 md:p-14 rounded-2xl shadow-2xl flex flex-wrap md:flex-nowrap items-center gap-6">
+        <div className="w-auto md:w-1/2 hidden md:block">
           <Image
             src={FaqHub}
             alt="Logo"
@@ -42,9 +42,9 @@ export default function LoginPage() {
           />
         </div>
 
-        <div className="w-full md:w-1/2">
+        <div className="w-full md:w-1/2 max-w-lg">
           <div className="flex justify-between items-center mb-6">
-            <h1 className="text-4xl font-bold text-center text-blue-600 dark:text-blue-400">
+            <h1 className="text-3xl md:text-4xl font-bold text-center text-blue-600 dark:text-blue-400">
               SEJA BEM-VINDO
             </h1>
             <button
@@ -98,7 +98,7 @@ export default function LoginPage() {
               )}
             </div>
 
-            <div className="flex items-center space-x-6">
+            <div className="flex flex-wrap gap-4">
               <label className="flex items-center space-x-2 text-gray-800 dark:text-gray-200 font-semibold">
                 <input
                   type="radio"
@@ -106,7 +106,6 @@ export default function LoginPage() {
                   value="aluno"
                   checked={role === "aluno"}
                   onChange={() => setRole("aluno")}
-                  className="text-blue-600 focus:ring-blue-500"
                 />
                 <span>Aluno</span>
               </label>
@@ -117,7 +116,6 @@ export default function LoginPage() {
                   value="professor"
                   checked={role === "professor"}
                   onChange={() => setRole("professor")}
-                  className="text-blue-600 focus:ring-blue-500"
                 />
                 <span>Professor/Servidor</span>
               </label>
