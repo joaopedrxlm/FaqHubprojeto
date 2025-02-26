@@ -11,7 +11,7 @@ import { Eye, EyeOff, Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useTheme } from "next-themes";
-import { useAuth } from "@/app/context/AuthContext";
+
 
 const schema = z.object({
   email: z.string().email("E-mail inválido"),
@@ -22,8 +22,6 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const { theme, setTheme } = useTheme();
   const router = useRouter();
-  const { login } = useAuth();
-
   const {
     register,
     handleSubmit,
@@ -31,7 +29,7 @@ export default function LoginPage() {
   } = useForm({ resolver: zodResolver(schema) });
 
   const onSubmit = (data: any) => {
-    login(data.email, data.password); // Autentica o usuário
+  // Autentica o usuário
     router.push("/dashboard"); // Redireciona para o dashboard
   };
 
