@@ -5,7 +5,7 @@ import FaqHub from "../public/faqhub.png";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Menu, Bell, Home, Search, Moon, Sun } from "lucide-react";
+import { Menu, Bell, Home, Search, Moon, Sun, LogOut } from "lucide-react";
 
 export default function FAQHub() {
   // Estado para a mensagem a ser exibida (caso não haja conteúdo)
@@ -41,6 +41,19 @@ export default function FAQHub() {
     }
   }, [darkMode]);
 
+  // Hook que carrega a visibilidade dos cards do localStorage
+  useEffect(() => {
+    const savedCardsVisibility = localStorage.getItem("showCards");
+    if (savedCardsVisibility) {
+      setShowCards(savedCardsVisibility === "true"); // Define a visibilidade com base no valor salvo
+    }
+  }, []);
+
+  // Hook que salva a alteração da visibilidade dos cards no localStorage
+  useEffect(() => {
+    localStorage.setItem("showCards", showCards.toString()); // Salva a visibilidade no localStorage
+  }, [showCards]);
+
   // Função que lida com os cliques nos itens do menu
   const handleClick = (action: string) => {
     if (action === "Home") {
@@ -49,6 +62,17 @@ export default function FAQHub() {
       setMessage("Não há nada ainda!"); // Exibe uma mensagem caso outra opção seja clicada
       setShowCards(false); // Oculta os cards
     }
+  };
+
+  // Função para lidar com o logout
+  const handleLogout = () => {
+    // Realiza o logout e redireciona para a página de login ou inicial
+    // Aqui você pode limpar o localStorage ou qualquer outra lógica necessária
+    localStorage.removeItem("theme");
+    localStorage.removeItem("showCards");
+    alert("Você foi desconectado.");
+    // Redirecionar para a página inicial, por exemplo:
+    window.location.href = "/sair"; // saiu da página
   };
 
   return (
@@ -108,6 +132,13 @@ export default function FAQHub() {
             onClick={() => handleClick("Notificações")}
           >
             <Bell size={16} /> Notificações
+          </Button>
+          <Button
+            variant="ghost"
+            className="w-full flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-800 transition-all"
+            onClick={handleLogout}
+          >
+            <LogOut size={16} /> Sair
           </Button>
         </nav>
 
