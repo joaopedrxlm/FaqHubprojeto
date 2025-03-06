@@ -6,48 +6,66 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Menu, Bell, Home, Search, Moon, Sun } from "lucide-react";
+import { toast } from "react-hot-toast";
 
 export default function FAQHub() {
-  // Estado para a mensagem a ser exibida (caso não haja conteúdo)
   const [message, setMessage] = useState<string>("");
-
-  // Estado para controlar a exibição dos cards (quando mostrar ou não)
   const [showCards, setShowCards] = useState<boolean>(false);
-
-  // Estado para controlar o tema claro/escuro
   const [darkMode, setDarkMode] = useState<boolean>(false);
+  const [notifications, setNotifications] = useState<
+    { title: string; subtitle: string }[]
+  >([]);
+  const [activeSection, setActiveSection] = useState<string>("Home");
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [newNotification, setNewNotification] = useState<{
+    title: string;
+    subtitle: string;
+  }>({ title: "", subtitle: "" });
 
   // Função para alternar entre os modos claro e escuro
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
   };
 
-  // Hook que carrega o tema salvo no localStorage quando o componente é montado
+  // Hook que carrega o tema salvo no localStorage
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
     if (savedTheme) {
-      setDarkMode(savedTheme === "dark"); // Define o tema com base no valor salvo
+      setDarkMode(savedTheme === "dark");
     }
   }, []);
 
-  // Hook que salva a alteração de tema no localStorage sempre que o estado de darkMode mudar
+  // Hook que salva a alteração de tema no localStorage
   useEffect(() => {
     if (darkMode) {
-      document.documentElement.classList.add("dark"); // Adiciona a classe "dark" no HTML para aplicar o tema
-      localStorage.setItem("theme", "dark"); // Salva a preferência de tema
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
     } else {
-      document.documentElement.classList.remove("dark"); // Remove a classe "dark" para retornar ao tema claro
-      localStorage.setItem("theme", "light"); // Salva a preferência de tema claro
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
     }
   }, [darkMode]);
 
-  // Função que lida com os cliques nos itens do menu
-  const handleClick = (action: string) => {
-    if (action === "Home") {
-      setShowCards(true); // Exibe os cards quando clicar em "Home"
+  // Função que abre o modal para adicionar notificação
+  const openNotificationModal = () => {
+    setIsModalOpen(true);
+  };
+
+  // Função para adicionar notificação
+  const addNotification = () => {
+    setNotifications((prev) => [...prev, newNotification]);
+    toast.success("Notificação adicionada!");
+    setIsModalOpen(false);
+    setNewNotification({ title: "", subtitle: "" });
+  };
+
+  const handleClick = (section: string) => {
+    setActiveSection(section);
+    if (section === "Home") {
+      setShowCards(true);
     } else {
-      setMessage("Não há nada ainda!"); // Exibe uma mensagem caso outra opção seja clicada
-      setShowCards(false); // Oculta os cards
+      setMessage("Não há nada ainda!");
+      setShowCards(false);
     }
   };
 
@@ -59,7 +77,6 @@ export default function FAQHub() {
           darkMode ? "bg-black text-white" : "bg-white text-gray-800"
         }`}
       >
-        {/* Cabeçalho com logo e botão para alternar entre os modos */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-4">
             <Image
@@ -79,7 +96,6 @@ export default function FAQHub() {
           </Button>
         </div>
 
-        {/* Títulos de seção */}
         <h1 className="text-lg font-bold text-blue-600 dark:text-blue-400">
           FAQ - Hub
         </h1>
@@ -87,13 +103,11 @@ export default function FAQHub() {
           Painel de Controle
         </p>
 
-        {/* Input de pesquisa */}
         <Input
           placeholder="Pesquisar"
           className="mt-4 border border-blue-500 dark:border-blue-400 focus:ring-blue-600"
         />
 
-        {/* Menu de navegação */}
         <nav className="mt-6 space-y-2">
           <Button
             variant="ghost"
@@ -105,13 +119,12 @@ export default function FAQHub() {
           <Button
             variant="ghost"
             className="w-full flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-800 transition-all"
-            onClick={() => handleClick("Notificações")}
+            onClick={openNotificationModal}
           >
             <Bell size={16} /> Notificações
           </Button>
         </nav>
 
-        {/* Seção de interesses */}
         <div className="mt-6">
           <h2 className="text-sm font-semibold text-blue-600 dark:text-blue-400">
             Meus Interesses
@@ -144,7 +157,6 @@ export default function FAQHub() {
 
       {/* Conteúdo principal */}
       <main className={`flex-1 p-6 ${darkMode ? "bg-black" : "bg-white"}`}>
-        {/* Cabeçalho da seção de FAQs */}
         <header className="flex items-center justify-between border-b pb-2 mb-4">
           <h2 className="text-xl font-semibold text-blue-600 dark:text-blue-400">
             Todos os FAQs
@@ -165,19 +177,17 @@ export default function FAQHub() {
           </div>
         </header>
 
-        {/* Texto explicativo */}
         <h3 className="mt-6 text-lg font-semibold text-blue-600 dark:text-blue-400">
           Encontre algo do seu interesse
         </h3>
 
-        {/* Mensagem de erro ou aviso */}
         {message && (
           <p className="mt-4 text-lg text-red-600 dark:text-red-400">
             {message}
           </p>
         )}
 
-        {/* Cards que são exibidos dependendo da escolha do usuário */}
+        {/* Cards */}
         <div className="mt-4 grid grid-cols-3 gap-6">
           {showCards && (
             <>
@@ -201,10 +211,69 @@ export default function FAQHub() {
                   </p>
                 </CardContent>
               </Card>
-              {/* Mais cards aqui */}
             </>
           )}
         </div>
+
+        {/* Notificações */}
+        {notifications.length > 0 && (
+          <div className="mt-6 space-y-4">
+            {notifications.map((notification, index) => (
+              <Card
+                key={index}
+                className="shadow-lg bg-white dark:bg-black hover:shadow-xl transition-shadow"
+              >
+                <CardContent className="p-6">
+                  <h3 className="font-semibold text-blue-600 dark:text-blue-400">
+                    {notification.title}
+                  </h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-300">
+                    {notification.subtitle}
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+
+        {/* Modal para adicionar notificação */}
+        {isModalOpen && (
+          <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white dark:bg-black p-6 rounded shadow-lg w-96">
+              <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400 mb-4">
+                Adicionar Notificação
+              </h3>
+              <Input
+                placeholder="Título"
+                value={newNotification.title}
+                onChange={(e) =>
+                  setNewNotification({
+                    ...newNotification,
+                    title: e.target.value,
+                  })
+                }
+                className="mb-4"
+              />
+              <Input
+                placeholder="Subtítulo"
+                value={newNotification.subtitle}
+                onChange={(e) =>
+                  setNewNotification({
+                    ...newNotification,
+                    subtitle: e.target.value,
+                  })
+                }
+                className="mb-4"
+              />
+              <div className="flex justify-end gap-4 ">
+                <Button variant="ghost" onClick={() => setIsModalOpen(false)}>
+                  Cancelar
+                </Button>
+                <Button onClick={addNotification}>Adicionar</Button>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );
